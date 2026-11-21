@@ -41,28 +41,28 @@ internal fun videoLabelFromInput(input: String): VideoLabel? {
 @Dao
 abstract class VideoLabelDao {
     @Query("SELECT * FROM video_label ORDER BY `key`")
-    abstract suspend fun labels(): List<VideoLabel>
+    abstract fun labels(): List<VideoLabel>
 
     @Query("SELECT labelKey FROM video_label_assignment WHERE mediaUri = :mediaUri")
-    protected abstract suspend fun selectedKeys(mediaUri: String): List<String>
+    protected abstract fun selectedKeys(mediaUri: String): List<String>
 
     @Query("SELECT mediaUri FROM video_label_assignment WHERE labelKey = :labelKey ORDER BY mediaUri")
-    abstract suspend fun mediaForLabel(labelKey: String): List<String>
+    abstract fun mediaForLabel(labelKey: String): List<String>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    protected abstract suspend fun insertLabel(label: VideoLabel)
+    protected abstract fun insertLabel(label: VideoLabel)
 
     @Insert
-    protected abstract suspend fun insertAssignments(assignments: List<VideoLabelAssignment>)
+    protected abstract fun insertAssignments(assignments: List<VideoLabelAssignment>)
 
     @Query("DELETE FROM video_label_assignment WHERE mediaUri = :mediaUri")
-    protected abstract suspend fun clearAssignments(mediaUri: String)
+    protected abstract fun clearAssignments(mediaUri: String)
 
     @Transaction
-    open suspend fun selection(mediaUri: String) = VideoLabelSelection(labels(), selectedKeys(mediaUri))
+    open fun selection(mediaUri: String) = VideoLabelSelection(labels(), selectedKeys(mediaUri))
 
     @Transaction
-    open suspend fun saveSelection(mediaUri: String, keys: Set<String>, newName: String) {
+    open fun saveSelection(mediaUri: String, keys: Set<String>, newName: String) {
         val newLabel = if (newName.isBlank()) null else requireNotNull(videoLabelFromInput(newName))
         if (newLabel != null) insertLabel(newLabel)
         val selected = if (newLabel == null) keys else keys + newLabel.key

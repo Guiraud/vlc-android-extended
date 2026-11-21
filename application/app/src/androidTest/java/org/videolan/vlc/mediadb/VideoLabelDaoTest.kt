@@ -3,7 +3,6 @@ package org.videolan.vlc.mediadb
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -34,7 +33,7 @@ class VideoLabelDaoTest {
     }
 
     @Test
-    fun labelsAreReusableAndFilteringIsPerVideo() = runBlocking {
+    fun labelsAreReusableAndFilteringIsPerVideo() {
         dao.saveSelection(first, emptySet(), " Référence ")
         dao.saveSelection(second, emptySet(), "RE\u0301FE\u0301RENCE")
         dao.saveSelection(first, setOf("référence"), "À revoir")
@@ -53,7 +52,7 @@ class VideoLabelDaoTest {
     }
 
     @Test
-    fun invalidLabelDoesNotEraseExistingAssignments() = runBlocking {
+    fun invalidLabelDoesNotEraseExistingAssignments() {
         dao.saveSelection(first, emptySet(), "Archive")
         try {
             dao.saveSelection(first, emptySet(), "two\nlines")

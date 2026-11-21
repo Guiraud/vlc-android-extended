@@ -2,6 +2,7 @@ package org.videolan.vlc.gui.dialogs
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputFilter
@@ -35,6 +36,7 @@ import org.videolan.vlc.R
 import org.videolan.vlc.database.MediaDatabase
 import org.videolan.vlc.database.VIDEO_LABEL_MAX_LENGTH
 import org.videolan.vlc.database.VideoLabel
+import org.videolan.vlc.database.VideoLabelDao
 import org.videolan.vlc.media.MediaUtils
 
 class VideoLabelsDialog : DialogFragment() {
@@ -43,7 +45,10 @@ class VideoLabelsDialog : DialogFragment() {
     private val checkboxes = linkedMapOf<String, CheckBox>()
     private var activeLabel: VideoLabel? = null
     private var loadJob: Job? = null
-    private val dao get() = MediaDatabase.getInstance(requireContext()).videoLabelDao()
+    private suspend fun <T> query(block: VideoLabelDao.() -> T): T {
+        val context = requireContext().applicationContext
+        return withContext(Dispatchers.IO) { MediaDatabase.getInstance(context).videoLabelDao().block() }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mediaUri = requireArguments().getString(MEDIA_URI)
@@ -83,10 +88,10 @@ class VideoLabelsDialog : DialogFragment() {
     }
 
     private fun loadEditor(dialog: AlertDialog, mediaUri: String, savedState: Bundle?) {
-        val save = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val save = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
         save.isEnabled = false
         load {
-            val selection = dao.selection(mediaUri)
+            val selection = query { selection(mediaUri) }
             val checked = (savedState?.getStringArrayList(DRAFT_KEYS) ?: selection.selectedKeys).toSet()
             val context = body.context
             val panel = LinearLayout(context).apply {
@@ -125,7 +130,7 @@ class VideoLabelsDialog : DialogFragment() {
                 save.isEnabled = false
                 lifecycleScope.launch {
                     try {
-                        dao.saveSelection(mediaUri, keys, name)
+                        query { saveSelection(mediaUri, keys, name) }
                         dismiss()
                     } catch (e: CancellationException) {
                         throw e
@@ -146,10 +151,11 @@ class VideoLabelsDialog : DialogFragment() {
     private fun showLabels(dialog: AlertDialog) {
         activeLabel = null
         dialog.setTitle(R.string.video_labels_filter)
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setText(android.R.string.cancel)
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener { dismiss() }
+        val back = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        back.setText(android.R.string.cancel)
+        back.setOnClickListener { dismiss() }
         load {
-            val labels = dao.labels()
+            val labels = query { labels() }
             if (labels.isEmpty()) showMessage(R.string.video_labels_empty)
             else showList(labels.map { it.name }) { showResults(dialog, labels[it]) }
         }
@@ -158,10 +164,11 @@ class VideoLabelsDialog : DialogFragment() {
     private fun showResults(dialog: AlertDialog, label: VideoLabel) {
         activeLabel = label
         dialog.setTitle(label.name)
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setText(R.string.video_labels_back)
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener { showLabels(dialog) }
+        val back = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        back.setText(R.string.video_labels_back)
+        back.setOnClickListener { showLabels(dialog) }
         load {
-            val uris = dao.mediaForLabel(label.key)
+            val uris = query { mediaForLabel(label.key) }
             val media = if (uris.isEmpty()) emptyList() else {
                 waitForML()
                 withContext(Dispatchers.IO) {
