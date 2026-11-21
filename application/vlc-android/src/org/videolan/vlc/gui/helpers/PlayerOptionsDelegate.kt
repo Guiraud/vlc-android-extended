@@ -126,7 +126,7 @@ class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Playbac
         if (chaptersCount > 1) options.add(PlayerOption(ID_CHAPTER_TITLE, R.drawable.ic_chapter, res.getString(R.string.go_to_chapter)))
         if (::bookmarkClickedListener.isInitialized) options.add(PlayerOption(ID_BOOKMARK, R.drawable.ic_bookmark, res.getString(R.string.bookmarks)))
         if (video && primary && VideoLabelsDialog.enabled(activity) && VideoLabelsDialog.supports(service.currentMediaWrapper))
-            options.add(PlayerOption(ID_VIDEO_LABELS, R.drawable.ic_edit, res.getString(R.string.video_labels_edit)))
+            options.add(PlayerOption(ID_VIDEO_LABELS, R.drawable.ic_player_label, res.getString(R.string.video_labels_edit)))
         if (showABReapeat) options.add(PlayerOption(ID_ABREPEAT, R.drawable.ic_abrepeat, res.getString(R.string.ab_repeat)))
         options.add(PlayerOption(ID_SAVE_PLAYLIST, R.drawable.ic_addtoplaylist, res.getString(R.string.playlist_save)))
         if (service.playlistManager.player.canDoPassthrough() && settings.getString(KEY_AOUT, "0") != "2")

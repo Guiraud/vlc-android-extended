@@ -346,10 +346,29 @@
                     android:visibility="visible"
                     tools:visibility="visible"
                     vlc:layout_constraintBottom_toBottomOf="@+id/player_overlay_play"
-                    vlc:layout_constraintEnd_toStartOf="@+id/player_space_left"
+                    vlc:layout_constraintEnd_toStartOf="@+id/player_overlay_labels"
                     vlc:layout_constraintStart_toEndOf="@+id/player_overlay_tracks"
                     vlc:layout_constraintTop_toTopOf="@+id/player_overlay_play"
                     vlc:srcCompat="@drawable/ic_player_rotate" />
+
+            <ImageView
+                    android:id="@+id/player_overlay_labels"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/small_margins_sides"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/video_labels_edit"
+                    android:focusable="true"
+                    android:scaleType="center"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    vlc:layout_constraintBottom_toBottomOf="@+id/player_overlay_play"
+                    vlc:layout_constraintEnd_toStartOf="@+id/player_space_left"
+                    vlc:layout_constraintStart_toEndOf="@+id/orientation_toggle"
+                    vlc:layout_constraintTop_toTopOf="@+id/player_overlay_play"
+                    vlc:srcCompat="@drawable/ic_player_label" />
 
             <Space
                     android:id="@+id/player_space_left"
@@ -357,7 +376,7 @@
                     android:layout_height="wrap_content"
                     vlc:layout_constraintBottom_toBottomOf="@+id/playlist_previous"
                     vlc:layout_constraintEnd_toStartOf="@+id/playlist_previous"
-                    vlc:layout_constraintStart_toEndOf="@+id/orientation_toggle"
+                    vlc:layout_constraintStart_toEndOf="@+id/player_overlay_labels"
                     vlc:layout_constraintTop_toTopOf="@+id/playlist_previous" />
 
             <ImageView

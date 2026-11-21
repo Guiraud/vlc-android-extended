@@ -37,6 +37,7 @@ import org.videolan.vlc.database.MediaDatabase
 import org.videolan.vlc.database.VIDEO_LABEL_MAX_LENGTH
 import org.videolan.vlc.database.VideoLabel
 import org.videolan.vlc.database.VideoLabelDao
+import org.videolan.vlc.gui.video.VideoPlayerActivity
 import org.videolan.vlc.media.MediaUtils
 
 class VideoLabelsDialog : DialogFragment() {
@@ -84,6 +85,13 @@ class VideoLabelsDialog : DialogFragment() {
         activeLabel?.let {
             outState.putString(FILTER_KEY, it.key)
             outState.putString(FILTER_NAME, it.name)
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (activity as? VideoPlayerActivity)?.let { player ->
+            if (!player.isShowing) player.overlayDelegate.dimStatusBar(true)
         }
     }
 

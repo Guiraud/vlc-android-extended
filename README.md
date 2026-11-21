@@ -58,10 +58,11 @@ VLC engine *(LibVLC)* for Android is licensed under [LGPLv2](libvlc/COPYING.LIB)
 
 ## Video labels in this fork
 
-On phones and tablets, open the video player's options or the context menu of a
-video and select **Video labels**. Choose any existing labels, optionally enter a
-new one, and confirm. In the main **Videos** screen, open the overflow menu and
-choose **Browse by label** to find and play matching videos.
+On phones and tablets, tap the label icon directly to the right of the rotation
+button in the video player HUD (or open the video player's options or a video's
+context menu and select **Video labels**). Choose any existing labels, optionally
+enter a new one, and confirm. In the main **Videos** screen, open the overflow
+menu and choose **Browse by label** to find and play matching videos.
 
 Labels cover the entire file, are stored on the device, and do not modify the
 video. Filtering lists local files currently indexed in the video library. A file

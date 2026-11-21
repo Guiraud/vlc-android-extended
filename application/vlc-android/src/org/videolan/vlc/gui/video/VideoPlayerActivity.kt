@@ -199,6 +199,7 @@ import org.videolan.vlc.gui.dialogs.RENAME_DIALOG_NEW_NAME
 import org.videolan.vlc.gui.dialogs.RenderersDialog
 import org.videolan.vlc.gui.dialogs.SleepTimerDialog
 import org.videolan.vlc.gui.dialogs.VLCBottomSheetDialogFragment.Companion.shouldInterceptRemote
+import org.videolan.vlc.gui.dialogs.VideoLabelsDialog
 import org.videolan.vlc.gui.dialogs.adapters.VlcTrack
 import org.videolan.vlc.gui.dialogs.showContext
 import org.videolan.vlc.gui.helpers.BitmapUtil
@@ -1984,6 +1985,10 @@ open class VideoPlayerActivity : AppCompatActivity(), PlaybackService.Callback, 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.orientation_toggle -> toggleOrientationLock()
+            R.id.player_overlay_labels -> service?.currentMediaWrapper?.let { media ->
+                overlayDelegate.hideOverlay(false)
+                VideoLabelsDialog.edit(this, media)
+            }
             R.id.playlist_toggle -> overlayDelegate.togglePlaylist()
             R.id.player_overlay_forward -> {
                 jump(forward = true, long = false)

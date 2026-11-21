@@ -92,6 +92,7 @@ import org.videolan.vlc.databinding.PlayerHudRightBinding
 import org.videolan.vlc.gui.audio.PlaylistAdapter
 import org.videolan.vlc.gui.browser.FilePickerActivity
 import org.videolan.vlc.gui.browser.KEY_MEDIA
+import org.videolan.vlc.gui.dialogs.VideoLabelsDialog
 import org.videolan.vlc.gui.dialogs.VideoTracksDialog
 import org.videolan.vlc.gui.helpers.BookmarkListDelegate
 import org.videolan.vlc.gui.helpers.OnRepeatListenerKey
@@ -488,6 +489,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                 updateOverlayPausePlay(true)
                 player.handler.removeMessages(VideoPlayerActivity.FADE_OUT)
             } else {
+                if (!player.isLocked) updateVideoLabelsButton(true)
                 player.handler.removeMessages(VideoPlayerActivity.FADE_OUT)
                 if (overlayTimeout != VideoPlayerActivity.OVERLAY_INFINITE)
                     player.handler.sendMessageDelayed(player.handler.obtainMessage(VideoPlayerActivity.FADE_OUT), overlayTimeout.toLong())
@@ -649,6 +651,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
             hudRightBinding.playerOverlayTitle.setGone()
             hudRightBinding.playerOverlayTitleWarning.setVisible()
         }
+        updateVideoLabelsButton()
     }
 
     fun updateSeekable(seekable: Boolean) {
@@ -678,6 +681,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
             abRepeatAddMarker.setOnClickListener(player)
             hudBinding.orientationToggle.setOnClickListener(if (enabled) player else null)
             hudBinding.orientationToggle.setOnLongClickListener(if (enabled) player else null)
+            hudBinding.playerOverlayLabels.setOnClickListener(if (enabled) player else null)
             hudBinding.swipeToUnlock.setOnStartTouchingListener { showOverlayTimeout(VideoPlayerActivity.OVERLAY_INFINITE) }
             hudBinding.swipeToUnlock.setOnStopTouchingListener { showOverlayTimeout(Settings.videoHudDelay * 1000) }
             hudBinding.swipeToUnlock.setOnUnlockListener {
@@ -737,6 +741,21 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
         if (!::hudBinding.isInitialized) return
         if (!player.isTv && !AndroidDevices.isChromeBook) {
             hudBinding.orientationToggle.setVisible()
+        }
+        updateVideoLabelsButton(!player.isLocked)
+    }
+
+    private fun canEditVideoLabels(): Boolean =
+        player.displayManager.isPrimary &&
+            VideoLabelsDialog.enabled(player) &&
+            VideoLabelsDialog.supports(player.service?.currentMediaWrapper)
+
+    fun updateVideoLabelsButton(show: Boolean = player.isShowing && !player.isLocked) {
+        if (!::hudBinding.isInitialized) return
+        hudBinding.playerOverlayLabels.visibility = when {
+            !canEditVideoLabels() -> View.GONE
+            show -> View.VISIBLE
+            else -> View.INVISIBLE
         }
     }
 
@@ -848,6 +867,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                 applyMargin(hudBinding.playlistNext, 0, false)
                 applyMargin(hudBinding.playerOverlayForward, 0, false)
                 applyMargin(hudBinding.orientationToggle, 0, false)
+                applyMargin(hudBinding.playerOverlayLabels, 0, false)
                 applyMargin(hudBinding.playerResize, 0, true)
             } else {
                 hudBinding.playerSpaceLeft.setVisible()
@@ -860,6 +880,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                 applyMargin(hudBinding.playlistNext, largeMargin.toInt(), false)
                 applyMargin(hudBinding.playerOverlayForward, largeMargin.toInt(), false)
                 applyMargin(hudBinding.orientationToggle, smallMargin.toInt(), false)
+                applyMargin(hudBinding.playerOverlayLabels, smallMargin.toInt(), false)
                 applyMargin(hudBinding.playerResize, smallMargin.toInt(), true)
             }
         }
@@ -957,6 +978,7 @@ class VideoPlayerOverlayDelegate (private val player: VideoPlayerActivity) {
                 hudBinding.playlistNext.visibility = if (show) View.VISIBLE else View.INVISIBLE
             }
             hudBinding.orientationToggle.visibility = if (player.isTv || AndroidDevices.isChromeBook) View.INVISIBLE else if (show) View.VISIBLE else View.INVISIBLE
+            updateVideoLabelsButton(show)
             if (!show) hudBinding.playerOverlaySeekbar.disableAccessibilityEvents() else hudBinding.playerOverlaySeekbar.enableAccessibilityEvents()
         }
         if (::hudRightBinding.isInitialized) {
