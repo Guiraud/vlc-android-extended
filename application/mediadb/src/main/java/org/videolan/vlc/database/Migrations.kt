@@ -270,6 +270,14 @@ val migration_36_37 = object:Migration(36, 37) {
     }
 }
 
+val migration_37_38 = object : Migration(37, 38) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE `video_label` (`key` TEXT NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`key`))")
+        database.execSQL("CREATE TABLE `video_label_assignment` (`mediaUri` TEXT NOT NULL, `labelKey` TEXT NOT NULL, PRIMARY KEY(`mediaUri`, `labelKey`), FOREIGN KEY(`labelKey`) REFERENCES `video_label`(`key`) ON UPDATE NO ACTION ON DELETE CASCADE)")
+        database.execSQL("CREATE INDEX `index_video_label_assignment_labelKey` ON `video_label_assignment` (`labelKey`)")
+    }
+}
+
 @OptIn(DelicateCoroutinesApi::class)
 fun populateDB(context: Context) = GlobalScope.launch(Dispatchers.IO) {
     val uris = listOf(AndroidDevices.MediaFolders.EXTERNAL_PUBLIC_MOVIES_DIRECTORY_URI,

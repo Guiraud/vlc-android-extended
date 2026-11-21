@@ -43,6 +43,7 @@ import org.videolan.vlc.gui.dialogs.SelectChapterDialog
 import org.videolan.vlc.gui.dialogs.SleepTimerDialog
 import org.videolan.vlc.gui.dialogs.VLCBottomSheetDialogFragment
 import org.videolan.vlc.gui.dialogs.VideoControlsSettingsDialog
+import org.videolan.vlc.gui.dialogs.VideoLabelsDialog
 import org.videolan.vlc.gui.helpers.UiTools.addToPlaylist
 import org.videolan.vlc.gui.helpers.hf.PinCodeDelegate
 import org.videolan.vlc.gui.helpers.hf.checkPIN
@@ -80,6 +81,7 @@ private const val ID_AUDIO_CONTROL_SETTING = 20L
 private const val ID_SAFE_MODE_LOCK = 21L
 private const val ID_SAFE_MODE_UNLOCK = 22L
 private const val ID_SHARE = 23L
+private const val ID_VIDEO_LABELS = 24L
 @SuppressLint("ShowToast")
 class PlayerOptionsDelegate(val activity: FragmentActivity, val service: PlaybackService, private val showABReapeat:Boolean = true)  {
 
@@ -123,6 +125,8 @@ class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Playbac
         val chaptersCount = service.getChapters(-1)?.size ?: 0
         if (chaptersCount > 1) options.add(PlayerOption(ID_CHAPTER_TITLE, R.drawable.ic_chapter, res.getString(R.string.go_to_chapter)))
         if (::bookmarkClickedListener.isInitialized) options.add(PlayerOption(ID_BOOKMARK, R.drawable.ic_bookmark, res.getString(R.string.bookmarks)))
+        if (video && primary && VideoLabelsDialog.enabled(activity) && VideoLabelsDialog.supports(service.currentMediaWrapper))
+            options.add(PlayerOption(ID_VIDEO_LABELS, R.drawable.ic_edit, res.getString(R.string.video_labels_edit)))
         if (showABReapeat) options.add(PlayerOption(ID_ABREPEAT, R.drawable.ic_abrepeat, res.getString(R.string.ab_repeat)))
         options.add(PlayerOption(ID_SAVE_PLAYLIST, R.drawable.ic_addtoplaylist, res.getString(R.string.playlist_save)))
         if (service.playlistManager.player.canDoPassthrough() && settings.getString(KEY_AOUT, "0") != "2")
@@ -258,6 +262,10 @@ class PlayerOptionsDelegate(val activity: FragmentActivity, val service: Playbac
             ID_BOOKMARK -> {
                 hide()
                 bookmarkClickedListener.invoke()
+            }
+            ID_VIDEO_LABELS -> {
+                hide()
+                service.currentMediaWrapper?.let { VideoLabelsDialog.edit(activity, it) }
             }
             ID_VIDEO_CONTROL_SETTING -> {
                 hide()

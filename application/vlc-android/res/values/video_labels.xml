@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="video_labels_edit">Video labels</string>
+    <string name="video_labels_filter">Browse by label</string>
+    <string name="video_labels_new">New label (optional)</string>
+    <string name="video_labels_back">Back to labels</string>
+    <string name="video_labels_empty">No labels yet. Open a video’s options to add one.</string>
+    <string name="video_labels_no_videos">No available videos in your library for this label.</string>
+    <string name="video_labels_loading">Loading…</string>
+    <string name="video_labels_error">Could not load or save video labels.</string>
+    <string name="video_labels_invalid">Enter a single line of up to 60 characters.</string>
+</resources>

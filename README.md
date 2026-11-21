@@ -56,6 +56,18 @@ VLC for Android is licensed under [GPLv2 (or later)](COPYING). Android libraries
 
 VLC engine *(LibVLC)* for Android is licensed under [LGPLv2](libvlc/COPYING.LIB).
 
+## Video labels in this fork
+
+On phones and tablets, open the video player's options or the context menu of a
+video and select **Video labels**. Choose any existing labels, optionally enter a
+new one, and confirm. In the main **Videos** screen, open the overflow menu and
+choose **Browse by label** to find and play matching videos.
+
+Labels cover the entire file, are stored on the device, and do not modify the
+video. Filtering lists local files currently indexed in the video library. A file
+that is renamed or moved can have a different URI and need to be labelled again.
+This version does not cover network streams, Android TV, incognito or safe mode.
+
 ## Build
 
 Native libraries are published on bintray. So you can:

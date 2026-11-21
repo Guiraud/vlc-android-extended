@@ -102,6 +102,7 @@ import org.videolan.vlc.gui.dialogs.RENAME_DIALOG_NEW_NAME
 import org.videolan.vlc.gui.dialogs.RenameDialog
 import org.videolan.vlc.gui.dialogs.SavePlaylistDialog
 import org.videolan.vlc.gui.dialogs.VIDEO_GROUPING
+import org.videolan.vlc.gui.dialogs.VideoLabelsDialog
 import org.videolan.vlc.gui.dialogs.showContext
 import org.videolan.vlc.gui.helpers.AudioUtil.setRingtone
 import org.videolan.vlc.gui.helpers.DefaultPlaybackAction
@@ -147,6 +148,7 @@ import org.videolan.vlc.util.ContextOption.CTX_RENAME_GROUP
 import org.videolan.vlc.util.ContextOption.CTX_SET_RINGTONE
 import org.videolan.vlc.util.ContextOption.CTX_SHARE
 import org.videolan.vlc.util.ContextOption.CTX_UNGROUP
+import org.videolan.vlc.util.ContextOption.CTX_VIDEO_LABELS
 import org.videolan.vlc.util.ContextOption.Companion.createCtxFolderFlags
 import org.videolan.vlc.util.ContextOption.Companion.createCtxVideoFlags
 import org.videolan.vlc.util.ContextOption.Companion.createCtxVideoGroupFlags
@@ -255,6 +257,8 @@ class VideoGridFragment : MediaBrowserFragment<VideosViewModel>(), SwipeRefreshL
         menu.findItem(R.id.ungroup).isVisible = viewModel.group != null
         menu.findItem(R.id.ml_menu_sortby).isVisible = false
         menu.findItem(R.id.ml_menu_display_options).isVisible = true
+        menu.findItem(R.id.ml_menu_video_labels)?.isVisible =
+            viewModel.group == null && viewModel.folder == null && VideoLabelsDialog.enabled(requireContext())
         if (requireActivity().isTalkbackIsEnabled()) menu.findItem(R.id.play_all).isVisible = true
     }
 
@@ -272,6 +276,7 @@ class VideoGridFragment : MediaBrowserFragment<VideosViewModel>(), SwipeRefreshL
             R.id.play_all -> {
                 onFabPlayClick(binding.root)
             }
+            R.id.ml_menu_video_labels -> VideoLabelsDialog.filter(requireActivity())
             R.id.ml_menu_display_options -> {
                 //filter all sorts and keep only applicable ones
                 val sorts = arrayListOf(Medialibrary.SORT_ALPHA, Medialibrary.SORT_FILENAME, Medialibrary.SORT_ARTIST, Medialibrary.SORT_ALBUM, Medialibrary.SORT_DURATION, Medialibrary.SORT_RELEASEDATE, Medialibrary.SORT_LASTMODIFICATIONDATE, Medialibrary.SORT_FILESIZE, Medialibrary.NbMedia, Medialibrary.SORT_INSERTIONDATE).filter {
@@ -620,6 +625,7 @@ class VideoGridFragment : MediaBrowserFragment<VideosViewModel>(), SwipeRefreshL
                 CTX_PLAY_ALL -> viewModel.playVideo(activity, media, position, forceAll = true)
                 CTX_PLAY -> viewModel.play(position)
                 CTX_INFORMATION -> showInfoDialog(media)
+                CTX_VIDEO_LABELS -> VideoLabelsDialog.edit(activity, media)
                 CTX_DELETE -> removeItem(media)
                 CTX_APPEND -> MediaUtils.appendMedia(activity, media)
                 CTX_SET_RINGTONE -> requireActivity().setRingtone(media)
@@ -726,6 +732,8 @@ class VideoGridFragment : MediaBrowserFragment<VideosViewModel>(), SwipeRefreshL
                     }
                     is MediaWrapper -> {
                         val flags = createCtxVideoFlags().apply {
+                            if (VideoLabelsDialog.enabled(requireContext()) && VideoLabelsDialog.supports(item))
+                                add(CTX_VIDEO_LABELS)
                             if (item.isFavorite) add(CTX_FAV_REMOVE) else add(CTX_FAV_ADD)
                             if (item.seen > 0) add(CTX_MARK_AS_UNPLAYED) else add(CTX_MARK_AS_PLAYED)
                             if (item.time != 0L) add(CTX_PLAY_FROM_START)

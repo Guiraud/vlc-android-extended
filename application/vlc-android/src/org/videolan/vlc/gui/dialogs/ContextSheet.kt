@@ -162,6 +162,7 @@ class ContextSheet : VLCBottomSheetDialogFragment() {
         if (flags.contains(CTX_PLAY_NEXT)) add(Simple(CTX_PLAY_NEXT, getString(R.string.insert_next), R.drawable.ic_play_next))
         if (flags.contains(CTX_DOWNLOAD_SUBTITLES) && VlcMigrationHelper.isLolliPopOrLater) add(Simple(CTX_DOWNLOAD_SUBTITLES, getString(R.string.download_subtitles), R.drawable.ic_download_subtitles))
         if (flags.contains(CTX_INFORMATION)) add(Simple(CTX_INFORMATION, getString(R.string.info), R.drawable.ic_information))
+        if (flags.contains(ContextOption.CTX_VIDEO_LABELS)) add(Simple(ContextOption.CTX_VIDEO_LABELS, getString(R.string.video_labels_edit), R.drawable.ic_edit))
         if (flags.contains(CTX_GO_TO_ALBUM)) add(Simple(CTX_GO_TO_ALBUM, getString(R.string.go_to_album), R.drawable.ic_album))
         if (flags.contains(CTX_GO_TO_ARTIST)) add(Simple(CTX_GO_TO_ARTIST, getString(R.string.go_to_artist), R.drawable.ic_no_artist))
         if (flags.contains(CTX_GO_TO_ALBUM_ARTIST)) add(Simple(CTX_GO_TO_ALBUM_ARTIST, getString(R.string.go_to_album_artist), R.drawable.ic_no_artist))
